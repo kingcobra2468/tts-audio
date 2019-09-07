@@ -5,8 +5,36 @@ import getopt
 import sys
 import base64
 
-DEBUG = True
+DEBUG = False
 
+# 'f:l:p:s:t:u:v', 
+# ['username=', 'password=', 'port=', 'set-volume=', 'text=', 'url=', 'volume'])
+
+MANUAL = """\
+AVAILABLE FLAGS
+    -f, --username=USERNAME
+            username part of authorization (if authorization middlewear in use)
+
+    -l, --password=PASSWORD
+            password part of authorization (if authorization middlewear in use)
+
+    -p, --port=PORT
+            port of TextToSpeech server (DEFAULT port is 8081 without flag)
+
+    -s, --server-volume=VOLUME (0 <= VOLUME <= 100)
+            set volume of the TextToSpeech server
+
+    -t, --text=TEXT
+            text that the TextToSpeech server will say
+
+    -u, --url=URL
+            host address of the TextToSpeech server
+    
+    -v, --volume
+            get volume of the TextToSpeech server 
+
+    -?, --help
+            displays AVAILABLE FLAGS"""
 @dataclass
 class client_auth:
     
@@ -105,8 +133,13 @@ if __name__ == '__main__':
     flags = command_flags()
     req_comps = request_components()
 
-    options, _ = getopt.getopt(sys.argv[1:], 'f:l:p:s:t:u:v', 
-        ['username=', 'password=', 'port=', 'set-volume=', 'text=', 'url=', 'volume'])
+    try:
+        options, _ = getopt.getopt(sys.argv[1:], 'f:l:p:s:t:u:v?', 
+            ['username=', 'password=', 'port=', 'set-volume=', 'text=', 'url=', 'volume', 'help'])
+    except:
+
+        print(MANUAL)
+        sys.exit(1)
 
     for opt, arg in options:
 
@@ -143,7 +176,15 @@ if __name__ == '__main__':
         elif opt in ('-v', '--volume'):
 
             flags.volume = True
+        
+        elif opt in ('-?', '--help'):
+
+            print(MANUAL)
+            sys.exit(0)
+
         else:
-            pass
+            
+            print(f'invalid flag: {opt}')
+            print(MANUAL)
 
     create_requests(client_creds, req_comps, flags)
