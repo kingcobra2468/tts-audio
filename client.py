@@ -156,7 +156,7 @@ if __name__ == '__main__':
         elif opt in ('-p', '--port'):
 
             req_comps.port = arg
-            flags.auth = True
+            flags.url = True
 
         elif opt in ('-s', '--set-volume'):
             
