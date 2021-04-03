@@ -1,13 +1,14 @@
 const express = require('express');
 const multer = require('multer');
 const say = require('say');
-const audio_utils = require('../utils/audio_utils');
-const fs = require('fs') 
+const audio_utils = require('@utils/audio_utils');
+const fs = require('fs')
+
 var router = express.Router();
-const upload = multer({'dest' : '/tmp'}).single('audio');
+const upload = multer({ 'dest': '/tmp' }).single('audio');
 const audio_utilies = audio_utils.audio_utils();
 
-router.get('/say', function(req, res) {
+router.get('/say', function (req, res) {
 
     var text = req.query.text;
 
@@ -16,8 +17,8 @@ router.get('/say', function(req, res) {
         res.status(400);
 
         res.send({
-            'error' : true,
-            'message' : 'text not specifed (query param "text" empty)'
+            'error': true,
+            'message': 'text not specifed (query param "text" empty)'
         });
     }
     else {
@@ -25,8 +26,8 @@ router.get('/say', function(req, res) {
         say.speak(text);
 
         res.send({
-            'error' : false,
-            'message' : text
+            'error': false,
+            'message': text
         });
     }
 
@@ -35,13 +36,13 @@ router.get('/say', function(req, res) {
 });
 
 router.post('/play', function (req, res) {
-    
+
     let return_data = {
-        'error' : false,
-        'message' : ''
+        'error': false,
+        'message': ''
     };
 
-    upload (req, res, function (err) {
+    upload(req, res, function (err) {
 
         if (err instanceof multer.MulterError) {
 
@@ -56,9 +57,9 @@ router.post('/play', function (req, res) {
         });
 
         switch (play_err) {
-    
+
             case 0:
-    
+
                 res.status(200);
                 break;
             case 1:
@@ -74,11 +75,10 @@ router.post('/play', function (req, res) {
                 return_data.message = "Error with aplay";
                 break;
         }
-        res.send(return_data); 
+        res.send(return_data);
         res.end();
-        
-        return; 
+
+        return;
     })
 });
-// auth hint: kak zavut cabaku pudel?
 module.exports = router;

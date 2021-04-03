@@ -2,15 +2,27 @@
   "name": "texttospeech",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
+  "main": "src/index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "rm -fr dist/*; webpack --config webpack.config.js",
+    "start": "node dist/speech_server.js"
   },
   "author": "Erik Tyryshkin",
   "license": "ISC",
   "dependencies": {
     "express": "^4.17.1",
     "multer": "^1.4.2",
-    "say": "^0.16.0"
+    "path": "^0.12.7",
+    "say": "^0.16.0",
+    "webpack": "^5.30.0",
+    "webpack-node-externals": "^2.5.2"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.13.14",
+    "@babel/preset-env": "^7.13.12",
+    "babel-loader": "^8.2.2",
+    "webpack-cli": "^4.6.0",
+    "webpack-dev-server": "^3.11.2"
   }
 }
