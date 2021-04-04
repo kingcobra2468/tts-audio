@@ -1,18 +1,17 @@
 const express = require('express');
 const multer = require('multer');
 const say = require('say');
-const audio_utils = require('@utils/audio_utils');
 const fs = require('fs')
+const { play_wav } = require('@utils/audio_controls');
 
 var router = express.Router();
 const upload = multer({ 'dest': '/tmp' }).single('audio');
-const audio_utilies = audio_utils.audio_utils();
 
 router.get('/say', function (req, res) {
 
     var text = req.query.text;
 
-    if (text == undefined) {
+    if (text == undefined) { // text query-arg doesnt exist
 
         res.status(400);
 
@@ -20,65 +19,57 @@ router.get('/say', function (req, res) {
             'error': true,
             'message': 'text not specifed (query param "text" empty)'
         });
-    }
-    else {
+        res.end();
 
-        say.speak(text);
-
-        res.send({
-            'error': false,
-            'message': text
-        });
+        return
     }
 
-    res.end();
-    return;
+    say.speak(text); // playback of text via festival
+
+    res.send({
+        'error': false,
+        'message': text
+    });
 });
 
 router.post('/play', function (req, res) {
 
-    let return_data = {
-        'error': false,
-        'message': ''
-    };
+    let error = false;
+    let error_msg = '';
 
     upload(req, res, function (err) {
 
-        if (err instanceof multer.MulterError) {
+        if (err instanceof multer.MulterError) { // error uploading file
 
             res.status(412);
+            res.send({
+                'error': true,
+                'message': 'error uploading file'
+            });
             res.end();
+
             return;
         }
 
-        let play_err = audio_utilies.play_wav(req.file.path);
-        fs.unlink(req.file.path, function (err) {
+        let play_err = play_wav(req.file.path); // play the wav file
+        fs.unlink(req.file.path, (err) => { }); // delete file from local system
 
-        });
+        if (!play_err) { // error occured while playing wave
 
-        switch (play_err) {
+            res.status(500);
+            error = true;
 
-            case 0:
-
-                res.status(200);
-                break;
-            case 1:
-
-                res.status(500);
-                return_data.error = true;
-                return_data.message = "No such file or directory";
-                break;
-            case -1:
-
-                res.status(500);
-                return_data.error = true;
-                return_data.message = "Error with aplay";
-                break;
+            if (play_err == 1) // directory not found
+                error_msg = 'No such file or directory';
+            else // error using aplay utility
+                error_msg = 'Error with aplay'
         }
-        res.send(return_data);
-        res.end();
 
-        return;
+        res.send({
+            'error': error,
+            'message': error_msg
+        });
     })
 });
+
 module.exports = router;

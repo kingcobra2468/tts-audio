@@ -1,12 +1,11 @@
 const express = require('express');
-const audio_utils = require('@utils/audio_utils');
+const { get_volume, set_volume } = require('@utils/audio_controls');
 
-const audio_utilies = audio_utils.audio_utils();
 var router = express.Router();
 
 router.get('/get-volume', function (req, res) {
 
-    let audio_level = audio_utilies.get_volume();
+    let audio_level = get_volume(); // get volume level
 
     res.send({
         'level': audio_level,
@@ -18,32 +17,33 @@ router.get('/set-volume', function (req, res) {
 
     let audio_level = parseInt(req.query.level);
 
-    if (req.query.level == undefined) {
+    if (req.query.level == undefined) { //level query-arg doesnt exist 
 
         res.send({
             'error': true,
             'message': 'volume not specifed (query param "level" empty)'
         });
+        res.end();
+
+        return
     }
-    else if (isNaN(audio_level)) {
+    else if (isNaN(audio_level)) { // level query-arg isnt valid type
 
         res.send({
             'error': true,
             'message': 'volume incorrect type (query param "level" not number)'
         });
-    }
-    else {
+        res.end();
 
-        let return_status = audio_utilies.set_volume(audio_level);
-
-        res.send({
-            'level': audio_level,
-            'error': (!return_status) ? true : false
-        });
+        return
     }
 
-    res.end();
-    return;
+    let return_status = set_volume(audio_level); // set the volume
+
+    res.send({
+        'level': audio_level,
+        'error': (!return_status) ? true : false
+    });
 });
 
 module.exports = router;

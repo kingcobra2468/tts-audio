@@ -1,5 +1,7 @@
 const path = require('path');
 const nodeExternals = require('webpack-node-externals');
+const webpack = require('webpack')
+const dotenv = require('dotenv').config({ path: __dirname + '/.env' });
 
 module.exports = {
     mode: 'development',
@@ -11,6 +13,8 @@ module.exports = {
         alias: {
             '@api': path.resolve(__dirname, './src/api'),
             '@utils': path.resolve(__dirname, './src/utils'),
+            '@middleware': path.resolve(__dirname, './src/middleware'),
+            '@': path.resolve(__dirname, './src/'),
         }
     },
     output: {
@@ -26,4 +30,9 @@ module.exports = {
             },
         ]
     },
+    plugins: [
+        new webpack.DefinePlugin({
+            'process.env': JSON.stringify(dotenv.parsed)
+        })
+    ]
 };

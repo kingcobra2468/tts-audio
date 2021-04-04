@@ -1,40 +1,40 @@
 const fs = require('fs');
+const { LOG_FILE } = require('@/config')
 
-module.exports.logger = function (file_path) {
-
-    const FILE_PATH = file_path;
-    const STATES = { info: 'INFO', debug: 'DEBUG', warning: 'WARNING', error: 'ERROR', fatal: 'FATAL' };
-    const STATES_KEYS = Object.keys(STATES);
-
-    Object.freeze(STATES);
-
-    var create_log_file = function (state, message) {
-
-        var date = Date();
-        var formatted_log = `${state} [${date}] ${message}\n`;
-
-        return formatted_log;
-    };
-
-    var log = function (state, args) {
-
-        if (!STATES_KEYS.includes(state.toLowerCase())) throw new Error(`State ${state} not an option of ${STATES_KEYS.toString()}`);
-        args_as_string = args.join(' ');
-
-        fs.appendFile(FILE_PATH, create_log_file(state, args_as_string), function (error) {
-
-            if (error) throw new Error(error.message);
-        });
-    };
-
-    return {
-
-        STATES: STATES,
-        log: function (state) {
-
-            var args = Object.values(arguments);
-            args.splice(0, 1);
-            log(state, args);
-        }
-    }
+const LEVELS = { // log level mappings
+    INFO: 'INFO', DEBUG: 'DEBUG', WARNING: 'WARNING',
+    ERROR: 'ERROR', FATAL: 'FATAL'
 };
+const LEVELS_KEYS = Object.keys(LEVELS); // accepted log levels
+
+/**
+ * Formats a log record into a string
+ * @param {string} level 
+ * @param {string} log_msg 
+ * @returns 
+ */
+const format_log_record = function (level, log_msg) {
+
+    var date = Date(); // gets the current time
+    var formatted_log = `${level} [${date}] ${log_msg}\n`;
+
+    return formatted_log;
+};
+
+/**
+ * Adds a new record into the logs file
+ * @param {string} level 
+ * @param {*string record 
+ */
+var append_log_record = function (level, record) {
+
+    if (!LEVELS_KEYS.includes(level.toUpperCase())) throw new Error( // check if log level is valid
+        `State ${level} not an option of ${LEVELS_KEYS.toString()}`);
+
+    fs.appendFile(LOG_FILE, format_log_record(level, record), function (error) { // appends to file
+
+        if (error) throw new Error(error.message); // unable to append to log file
+    });
+};
+
+module.exports = { LEVELS, append_log_record }
