@@ -1,0 +1,2 @@
+curl -X GET -H "Authorization: BASIC RXJpazpCYW50aWs=" http://localhost:8081/audio/set_volume?level=40
+python3.7 client.py --username=Erik --password=Bantik --text="" --url="http://10.0.1.10" --port=8081
