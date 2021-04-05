@@ -20,8 +20,8 @@ if (AUTH_ENABLED)
     app.use(auth);
 
 // add routes
-app.use('/audio', audio);
-app.use('/speak', speak);
+app.use('/api/audio', audio);
+app.use('/api/speak', speak);
 
 app.use('*', function (req, res) {
 

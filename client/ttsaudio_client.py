@@ -7,10 +7,10 @@ import sys
 class TTSAudioClient:
     """TTSAudio Client
     """
-    SET_VOLUME_API = '/audio/set-volume'
-    GET_VOLUME_API = '/audio/get-volume'
-    SAY_TEXT_API = '/speak/say'
-    SEND_WAV_API = '/speak/play'
+    SET_VOLUME_API = '/api/audio/set-volume'
+    GET_VOLUME_API = '/api/audio/get-volume'
+    SAY_TEXT_API = '/api/speak/say'
+    SEND_WAV_API = '/api/speak/play'
 
     def __init__(self, host, port, username=None, password=None):
         """Constructor
@@ -51,7 +51,7 @@ class TTSAudioClient:
         """
         args = {'level': level}
 
-        resp = requests.get(url=f'{self._base_path}{self.SET_VOLUME_API}',
+        resp = requests.put(url=f'{self._base_path}{self.SET_VOLUME_API}',
                                 params=args, headers=self.__headers)
         return resp
 
@@ -66,7 +66,7 @@ class TTSAudioClient:
         """
         args = {'text': text}
 
-        resp = requests.get(url=f'{self._base_path}{self.SAY_TEXT_API}',
+        resp = requests.post(url=f'{self._base_path}{self.SAY_TEXT_API}',
                                 params=args, headers=self.__headers)
         return resp
 

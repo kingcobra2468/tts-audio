@@ -13,7 +13,7 @@ router.get('/get-volume', function (req, res) {
     });
 });
 
-router.get('/set-volume', function (req, res) {
+router.put('/set-volume', function (req, res) {
 
     let audio_level = parseInt(req.query.level);
 

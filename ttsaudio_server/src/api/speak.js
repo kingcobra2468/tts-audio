@@ -7,7 +7,7 @@ const { play_wav } = require('@utils/audio_controls');
 var router = express.Router();
 const upload = multer({ 'dest': '/tmp' }).single('audio');
 
-router.get('/say', function (req, res) {
+router.post('/say', function (req, res) {
 
     var text = req.query.text;
 

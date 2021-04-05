@@ -8,10 +8,8 @@
 - [ ] Add TLS/SSL support
 
 ### **Client**
-- [ ]  Refactor the python client
-
+N/A
 ### **Repo**
-- [ ]  Add a README
 - [ ]  Add testcases
 
 ## **Completed Tasks**
@@ -20,3 +18,5 @@
 - [X] Move auth into its own directory
 - [X] Fix Buffer deprecation in authenticate.js
 - [X] Move all global constants into a config file config.
+- [X]  Add a README
+- [X]  Refactor the python client
