@@ -54,7 +54,7 @@ router.post('/play', function (req, res) {
         let play_err = play_wav(req.file.path); // play the wav file
         fs.unlink(req.file.path, (err) => { }); // delete file from local system
 
-        if (!play_err) { // error occured while playing wave
+        if (play_err) { // error occured while playing wave
 
             res.status(500);
             error = true;

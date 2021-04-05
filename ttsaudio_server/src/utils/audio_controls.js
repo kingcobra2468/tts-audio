@@ -48,14 +48,15 @@ const play_wav = function (file_name) {
 
     if (typeof (file_name) != 'string') return false; // check for correct type
 
-    try {
-        let raw = execSync('aplay -P ' + file_name, timeout = 2000); // play via subprocess
-    }
-    catch (error) { // error occured when playing wav
+    execSync('aplay -Pq ' + file_name, (error) => {
+        console.log(error)
+
         // handle specific error where the wav file wasnt found on the system
         let file_exists_error = error.stderr.toString().search('No such file or directory');
         return file_exists_error ? 1 : -1; // 1 : no such file error, -1 : other error
-    }
+    }, (stdout) => {
+        return 0;
+    }); // play via subprocess
 
     return 0;
 }

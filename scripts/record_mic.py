@@ -33,7 +33,7 @@ class WavRecorder():
         """Dump recording frames into a .wav file
 
         Args:
-            frames ([type]): [description]
+            frames (list): buffer holding audio frames
         """
         waveFile = wave.open(self.__filename, 'wb')
 

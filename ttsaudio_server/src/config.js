@@ -1,8 +1,6 @@
 require('dotenv').config()
 var config = {};
 
-console.log(process.env.TTS_AUTH_ENABLED)
-
 // Authentication
 config.USERNAME = process.env.TTS_USERNAME || 'username'
 config.PASSWORD = process.env.TTS_PASSWORD || 'password'
