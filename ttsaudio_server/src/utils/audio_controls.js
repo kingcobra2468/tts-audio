@@ -2,63 +2,57 @@ const { exec, execSync } = require('child_process');
 
 /**
  * Set the volume level of the machine to a new level
- * @param {number} volume_level 
+ * @param {number} volumeLevel
  * @returns {boolean}
  */
-const set_volume = function (volume_level) {
+const setVolume = (volumeLevel) => {
+  let volume = parseInt(volumeLevel, 10);
 
-    volume_level = parseInt(volume_level);
+  if (Number.isNaN(volume)) return false; // check if volume_level is numerical
+  if (volume > 100) volume = 100; // check if level within range (upperbound)
+  if (volume < 0) volume = 0; // check if level within range (lowerbound)
 
-    if (isNaN(volume_level)) return false; // check if volume_level is numerical
-    if (100 < volume_level) volume_level = 100; // check if level within range (upperbound)
-    if (0 > volume_level) volume_level = 0; // check if level within range (lowerbound)
+  exec(`amixer set Master ${parseInt(volume, 10)}%`, (err, _0, _1) => {
+    if (err) throw new Error('amixer not installed');
+  });
 
-    exec('amixer set Master ' + parseInt(volume_level) + '%', (err, stdout, stderr) => {
-        if (err) throw new Error('amixer not installed');
-    });
-
-    return true;
-}
+  return true;
+};
 
 /**
  * Gets the current volume of the machine
  * @returns {number}
  */
-const get_volume = function () {
+const getVolume = () => {
+  const regex = new RegExp('[0-9]{1,3}%');
 
-    var regex = new RegExp('[0-9]{1,3}%');
-
-    try {
-
-        let raw = execSync('amixer get Master', timeout = 2000); // get volume via subprocess
-        let val = regex.exec(raw)[0].replace('%', '');
-        return parseInt(val);
-    }
-    catch (error) { // error in getting volume level
-        return -1;
-    }
-}
+  try {
+    const raw = execSync('amixer get Master', { timeout: 2000 }); // get volume via subprocess
+    const val = regex.exec(raw)[0].replace('%', '');
+    return parseInt(val, 10);
+  } catch (error) { // error in getting volume level
+    return -1;
+  }
+};
 
 /**
  * Play a wav file via the speakers
- * @param {string} file_name 
+ * @param {string} filename
  * @returns {number}
  */
-const play_wav = function (file_name) {
+const playWAV = (filename) => {
+  if (typeof (filename) !== 'string') return false; // check for correct type
 
-    if (typeof (file_name) != 'string') return false; // check for correct type
+  execSync(`aplay -Pq ${filename}`, (error) => {
+    // eslint-disable-next-line no-console
+    console.log(error);
 
-    execSync('aplay -Pq ' + file_name, (error) => {
-        console.log(error)
+    // handle specific error where the wav file wasnt found on the system
+    const fileExistsError = error.stderr.toString().search('No such file or directory');
+    return fileExistsError ? 1 : -1; // 1 : no such file error, -1 : other error
+  }, (_) => 0); // play via subprocess
 
-        // handle specific error where the wav file wasnt found on the system
-        let file_exists_error = error.stderr.toString().search('No such file or directory');
-        return file_exists_error ? 1 : -1; // 1 : no such file error, -1 : other error
-    }, (stdout) => {
-        return 0;
-    }); // play via subprocess
+  return 0;
+};
 
-    return 0;
-}
-
-module.exports = { set_volume, get_volume, play_wav }
+module.exports = { setVolume, getVolume, playWAV };
