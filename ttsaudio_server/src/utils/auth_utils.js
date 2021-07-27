@@ -1,28 +1,30 @@
 /**
  * Decodes a base64 encoded username:password pair
- * @param {string} base64_str 
+ * @param {string} base64Str
  * @returns {Object}
  */
-const get_credentials = function (base64_str) {
+const getCredentials = (base64Str) => {
+  // matching string for getting base64 string
+  const base64Scanner = RegExp('^BASIC ([A-Z]|[a-z]|[0-9]|[+/=]){1,}$');
 
-    let base64_regex_pattern = RegExp('^BASIC ([A-Z]|[a-z]|[0-9]|[+/=]){1,}$'); // matching string for getting base64 string
+  if (!base64Scanner.test(base64Str)) {
+    throw new Error('BASE64 encoded input is incorrectly formatted.');
+  }
 
-    if (!base64_regex_pattern.test(base64_str)) {
-        throw new Error('BASE64 encoded input is incorrectly formatted.');
-    }
+  const base64Credentials = base64Str.split(' ')[1]; // get the base64 string
+  // eslint-disable-next-line new-cap
+  const decodedCredentials = new Buffer.from(base64Credentials, 'base64').toString();
+  let [username, password] = ['', ''];
 
-    let base64_credentials = base64_str.split(' ')[1] // get the base64 string
-    let decoded_base64_credentials = new Buffer.from(base64_credentials, 'base64').toString();
-    let [username, password] = ['', ''];
+  if (decodedCredentials !== ':') { // checking if decoding took place successfully
+    // eslint-disable-next-line new-cap
+    [username, password] = new Buffer.from(base64Credentials, 'base64').toString().split(':');
+  }
 
-    if (decoded_base64_credentials != ':') { // checking if decoding took place successfully
-        [username, password] = new Buffer.from(base64_credentials, 'base64').toString().split(':');
-    }
-
-    return {
-        username: username,
-        password: password
-    }
+  return {
+    username,
+    password,
+  };
 };
 
-module.exports = { get_credentials }
+module.exports = { getCredentials };

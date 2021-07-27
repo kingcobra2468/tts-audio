@@ -1,6 +1,5 @@
 const path = require('path');
 
-
 module.exports = {
   env: {
     es2021: true,
@@ -17,6 +16,7 @@ module.exports = {
   },
   rules: {
     'node/no-missing-require': 'off',
+    'no-unused-vars': ['error', { argsIgnorePattern: '^_[0-9]*' }],
   },
   settings: {
     'import/resolver': {

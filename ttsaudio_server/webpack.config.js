@@ -2,7 +2,7 @@ const path = require('path');
 const nodeExternals = require('webpack-node-externals');
 const ESLintPlugin = require('eslint-webpack-plugin');
 const webpack = require('webpack');
-const dotenv = require('dotenv').config({ path: path.join(__dirname, '/.env') });
+const dotenv = require('dotenv').config({ path: path.join(__dirname, '.env') });
 
 module.exports = {
   mode: 'development',
